@@ -2,7 +2,7 @@ import React from 'react';
 import { hashHistory } from 'react-router';
 
 import MapView from './../../ISOF-React-modules/components/views/MapView';
-import PopupWindow from './../../ISOF-React-modules/components/controls/PopupWindow';
+import RoutePopupWindow from './../../ISOF-React-modules/components/controls/RoutePopupWindow';
 
 import routeHelper from './../utils/routeHelper';
 
@@ -144,13 +144,13 @@ export default class Application extends React.Component {
 					zoomControlPosition="bottomright" 
 					layersControlPosition="bottomright" />
 
-				<PopupWindow onShow={this.popupWindowShowHandler} 
+				<RoutePopupWindow onShow={this.popupWindowShowHandler} 
 					onHide={this.popupWindowHideHandler} 
 					router={this.context.router} 
 					onClose={this.popupCloseHandler}
 				>
 					{popup}
-				</PopupWindow>
+				</RoutePopupWindow>
 
 				<div className="map-progress"><div className="indicator"></div></div>
 
