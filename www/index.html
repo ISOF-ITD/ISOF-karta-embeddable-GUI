@@ -4,15 +4,168 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-	<title>Sägenkarta</title>
+	<title>ISOF karta</title>
+
+	<link rel="stylesheet" href="css/style-basic.css">
+
+	<style type="text/css">
+
+		body {
+			font-family: Open Sans, Helvetiva, Arial, sans-serif;
+
+			background-image: none !important;
+
+			overflow: auto;
+		}
+
+	</style>
 
 </head>
 
 <body>
 
-<iframe src="embed.html#/places/record_ids/4,5,6,7,8,9,10,11" style="border: 1px solid #bdbdbd;" frameborder="0" width="700" height="500"></iframe>
+<div class="container" style="margin-top: 20px;">
+	<div id="iframeContent"></div>
 
-<iframe src="embed.html#/places/category/a" style="border: 1px solid #bdbdbd;" frameborder="0" width="700" height="500"></iframe>
+	<h1>Embedd karta</h1>
 
+	<div class="row">
+
+		<div class="six columns">
+
+			<label>URL till sökning på en av ISOF:s kartsidor:<br/>
+				<input id="urlInput" type="text" class="u-full-width" value="www.sprakochfolkminnen.se/om-oss/kartor/sagenkartan.html#/places/record_ids/4,5,6,7,8,9,10,11" />
+			</label>
+
+		</div>
+
+		<div class="three columns">
+
+			<label>Bredd (t.ex. 700 eller 100%):<br/>
+				<input id="widthInput" type="text" class="u-full-width" value="100%" />
+			</label>
+
+		</div>
+
+		<div class="three columns">
+
+			<label>Höjd:<br/>
+				<input id="heightInput" type="text" class="u-full-width" value="500" />
+			</label>
+
+		</div>
+
+	</div>
+
+	<div class="row">
+
+		<div class="six columns">
+			<label>Landing page:<br/>
+				<input class="u-full-width" type="text" id="landingPage" />
+			</label>
+		</div>
+
+		<div class="six columns">
+			<label>Sökparams:<br/>
+				<input class="u-full-width" type="text" id="searchParams" />
+			</label>
+		</div>
+
+	</div>
+
+	<button id="generateButton" class="button button-primary">Generara kod</button>
+
+	<h2>Embedd kod</h2>
+
+	<textarea id="codeDisplay" readonly onclick="this.select()" class="u-full-width"></textarea>
+
+</div>
+
+<script type="text/javascript" src="js/jquery-3.3.1.slim.min.js"></script>
+
+<script type="text/javascript">
+	
+$(document).ready(function() {
+	var iframeCode = '';
+
+	var embedUrl = 'http://frigg.sprakochfolkminnen.se/static/js-apps/embed-karta/embed.html';
+
+	var getMaterialType = function(url) {
+		var types = [
+			['sagenkarta', 'arkiv,tryckt'],
+			['folkmusik', 'folkmusik'],
+			['matkarta', 'matkarta'],
+			['dialektkarta', 'inspelning']
+		];
+
+		var type;
+
+		for (var i = 0; i<types.length; i++) {
+			if (url.indexOf(types[i][0]) > -1) {
+				type = types[i][1];
+				break;
+			}
+		}
+
+		return type;
+	}
+
+	var updateFields = function() {
+		var url = $('#urlInput').val();
+
+		var landingPage = url.split('#')[0];
+		var searchParams = url.indexOf('#') > -1 ? url.split('#')[1] : '';
+
+		if (landingPage.toLowerCase().indexOf('http://') == -1) {
+			landingPage = 'http://'+landingPage;
+		}
+
+		$('#landingPage').val(landingPage);
+		$('#searchParams').val(searchParams);
+	}
+
+	var generateCode = function() {
+		var landingPage = $('#landingPage').val();
+		var searchParams = $('#searchParams').val();
+
+		var iframeWidth = $('#widthInput').val();
+		var iframeHeight = $('#heightInput').val();
+
+		if (landingPage.toLowerCase().indexOf('http://') == -1) {
+			landingPage = 'http://'+landingPage;
+		}
+
+		if (searchParams.indexOf('type/') == -1) {
+			if (searchParams.indexOf('places/') > -1) {
+				searchParams = searchParams.replace('places/', 'places/type/'+getMaterialType(landingPage)+'/');
+			}
+			else if (searchParams.indexOf('place/') > -1) {
+				searchParams = searchParams.replace(/\/place\/([0-9]*)/g, '/place/$1/type/'+getMaterialType(landingPage))
+			}
+			else {
+				searchParams = 'places/type/'+getMaterialType(landingPage);
+			}
+		}
+
+		var generatedCode = '<iframe src="'+embedUrl+'?landingPage='+landingPage+(searchParams != '' ? '#'+searchParams : '')+'" style="border: 1px solid #bdbdbd;" frameborder="0" width="'+iframeWidth+'" height="'+iframeHeight+'"></iframe>';
+
+		if (iframeCode != generatedCode) {
+			iframeCode = generatedCode;
+
+			$('#codeDisplay').val(generatedCode);
+
+			$('#iframeContent').html(generatedCode);
+		}
+	}
+
+	$('#urlInput').on('change keyup', updateFields);
+
+	$('#generateButton').on('click', generateCode);
+
+	updateFields();
+	generateCode();
+});
+
+</script>
 </body>
 </html>

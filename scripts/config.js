@@ -1,18 +1,30 @@
 export default {
 	localLibraryName: 'sagenkarta_library',
 
-	apiRecordsType: 'arkiv,tryckt',
-	fetchOnlyCategories: true,
+	requiredParams: {
+	},
+
+	siteOptions: {
+		mapView: {
+			// Skulle MapView alltid uppdatera viewPort så att nya prickar på kartan syns alla
+			alwaysUpdateViewport: true
+		}
+	},
 
 	country: 'sweden',
 
-	imageUrl: 'http://www4.sprakochfolkminnen.se/Folkminnen/Svenska_sagor_filer/',
-	audioUrl: 'http://www4.sprakochfolkminnen.se/Folkminnen/Svenska_sagor_filer/inspelningar/',
-
-	appUrl: 'http://www4.sprakochfolkminnen.se/sagner/',
-	siteUrl: 'http://www.sprakochfolkminnen.se/om-oss/kartor/sagenkartan.html',
-
 	embeddedApp: true,
 
-	apiUrl: 'http://frigg-test.sprakochfolkminnen.se/sagendatabas/api/es/',
+	imageUrl: 'http://www4.sprakochfolkminnen.se/Folkminnen/Svenska_sagor_filer/',
+	personImageUrl: 'http://frigg.sprakochfolkminnen.se/media/',
+	audioUrl: 'http://130.238.4.107/',
+
+	appUrl: 'http://frigg.sprakochfolkminnen.se/static/js-apps/sagenkarta/',
+	siteUrl: 'http://www.sprakochfolkminnen.se/om-oss/kartor/sagenkartan.html',
+
+	// Url till Django/Elasticsearch API
+	apiUrl: 'http://frigg.sprakochfolkminnen.se/sagendatabas/api/es/',
+
+	// Url till Django Rest API
+	restApiUrl: 'http://frigg.sprakochfolkminnen.se/sagendatabas/api/'
 };

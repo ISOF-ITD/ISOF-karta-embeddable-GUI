@@ -6,6 +6,8 @@ import RoutePopupWindow from './../../ISOF-React-modules/components/controls/Rou
 
 import routeHelper from './../utils/routeHelper';
 
+import EventBus from 'eventbusjs';
+
 export default class Application extends React.Component {
 	constructor(props) {
 		super(props);
@@ -17,6 +19,15 @@ export default class Application extends React.Component {
 		window.applicationSettings = {
 			includeNordic: false
 		};
+
+		var queryObject = parse_query_string(window.location.search.substring(1));
+
+		if (queryObject.landingPage) {
+			window.applicationSettings.landingPage = queryObject.landingPage;
+		}
+
+		// Lägg till globalt eventBus variable för att skicka data mellan moduler
+		window.eventBus = EventBus;
 
 		// Bind event handlers till "this" (själva Application instance)
 		this.mapMarkerClick = this.mapMarkerClick.bind(this);
@@ -31,6 +42,7 @@ export default class Application extends React.Component {
 
 			searchValue: '',
 			searchField: '',
+			searchMetadata: false,
 
 			params: this.props.params,
 			popupVisible: false
@@ -72,21 +84,29 @@ export default class Application extends React.Component {
 	}
 
 	componentDidMount() {
+		if (this.props.params.nordic) {
+			window.eventBus.dispatch('nordicLegendsUpdate', null, {includeNordic: true});			
+		}
+
 		if (window.eventBus) {
 			eventBus.dispatch('application.searchParams', {
+				selectedType: this.props.params.type,
 				selectedCategory: this.props.params.category,
 				searchValue: this.props.params.search,
 				searchField: this.props.params.search_field,
 				searchYearFrom: this.props.params.year_from,
 				searchYearTo: this.props.params.year_to,
 				searchPersonRelation: this.props.params.person_relation,
-				searchGender: this.props.params.gender
+				searchGender: this.props.params.gender,
+				searchMetadata: this.props.params.has_metadata,
+				includeNordic: this.props.params.nordic
 			});
 
 			window.eventBus.addEventListener('Lang.setCurrentLang', this.languageChangedHandler);
 		}
 
 		this.setState({
+			selectedType: this.props.params.type,
 			selectedCategory: this.props.params.category,
 			searchValue: this.props.params.search,
 			searchField: this.props.params.search_field,
@@ -94,6 +114,7 @@ export default class Application extends React.Component {
 			searchYearTo: this.props.params.year_to,
 			searchPersonRelation: this.props.params.person_relation,
 			searchGender: this.props.params.gender,
+			searchMetadata: this.props.params.has_metadata,
 			params: this.props.params
 		}, function() {
 			setTimeout(function() {
@@ -105,6 +126,7 @@ export default class Application extends React.Component {
 	componentWillReceiveProps(props) {
 		if (window.eventBus) {
 			eventBus.dispatch('application.searchParams', {
+				selectedType: props.params.type,
 				selectedCategory: props.params.category,
 				searchValue: props.params.search,
 				searchField: props.params.search_field,
@@ -112,10 +134,13 @@ export default class Application extends React.Component {
 				searchYearTo: props.params.year_to,
 				searchPersonRelation: props.params.person_relation,
 				searchGender: props.params.gender,
+				includeNordic: props.params.nordic,
+				searchMetadata: props.params.has_metadata
 			});
 		}
 
 		this.setState({
+			selectedType: props.params.type,
 			selectedCategory: props.params.category,
 			searchValue: props.params.search,
 			searchField: props.params.search_field,
@@ -123,6 +148,7 @@ export default class Application extends React.Component {
 			searchYearTo: props.params.year_to,
 			searchPersonRelation: props.params.person_relation,
 			searchGender: props.params.gender,
+			searchMetadata: props.params.has_metadata,
 			params: props.params
 		});
 	}
