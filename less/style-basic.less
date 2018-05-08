@@ -155,3 +155,58 @@ audio::-webkit-media-controls-enclosure {
 		text-decoration: none !important;
 	}
 }
+
+.map-title {
+	position: absolute;
+
+	top: 20px;
+	left: 150px;
+
+	padding: 20px;
+
+	border-left: 1px solid #6d6d6d8a;
+	background: rgba(255, 255, 255, 0.4);
+
+	color: @color-red;
+	font-size: 1.1rem;
+	font-weight: bold;
+	text-decoration: none;
+
+	z-index: 500;
+
+	.transition(all 100ms ease-in-out);
+
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.95);
+		text-decoration: underline;
+
+		&:after {
+			opacity: 1;
+		}
+	}
+
+	a& {
+		&:after {
+			content: " ";
+
+			display: inline-block;
+
+			width: 14px;
+			height: 14px;
+
+			margin-left: 7px;
+			
+			background-image: url('../img/icon-link.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			
+			vertical-align: middle;
+
+			opacity: 0.8;
+
+			.transition(all 100ms ease-in-out);
+		}
+	}
+
+}

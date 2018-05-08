@@ -44,6 +44,9 @@ export default class Application extends React.Component {
 			searchField: '',
 			searchMetadata: false,
 
+			mapTitle: queryObject.mapTitle,
+			queryObject: queryObject,
+
 			params: this.props.params,
 			popupVisible: false
 		};
@@ -157,10 +160,25 @@ export default class Application extends React.Component {
 		return (JSON.stringify(nextState) != JSON.stringify(this.state));
 	}
 
+	cleanAppHashString(hashString) {
+		return hashString.replace(/\/type\/[^\/]*/g, '');
+	}
+
 	render() {
 		const {
 			popup
 		} = this.props;
+
+		var titleEl;
+		if (this.state.queryObject.mapTitle) {
+			if (this.state.queryObject.landingPage) {
+				titleEl = <a target="_parent" href={this.state.queryObject.landingPage+'#'+this.state.queryObject.searchParams} className="map-title">{this.state.queryObject.mapTitle}</a>;
+			}
+			else {
+				titleEl = <div className="map-title">{this.state.queryObject.mapTitle}</div>;
+			}
+		}
+
 		return (
 			<div className={'app-container'+(this.state.popupVisible ? ' has-overlay' : '')}>
 
@@ -177,6 +195,8 @@ export default class Application extends React.Component {
 				>
 					{popup}
 				</RoutePopupWindow>
+
+				{titleEl}
 
 				<div className="map-progress"><div className="indicator"></div></div>
 
